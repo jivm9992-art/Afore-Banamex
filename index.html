@@ -3,507 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Afore Banamex - Pentafón</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+    <title>Portal Prospectos IN - Citibanamex Afore</title>
     <style>
-        :root {
-            --bana-blue: #002D72;
-            --bana-red: #DA291C;
-            --bana-light-blue: #41B6E6;
-            --bg-color: #f4f6f9;
-            --text-color: #333;
-            --success-green: #7CFC00;
-            --warning-yellow: #fcd55b;
-            --alert-red: #ff6b6b;
-            --cyan-fin: #00bcd4;
-            --blue-dtt: #007bff;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-color); font-size: 14px; }
-        
-        header { background-color: white; border-bottom: 4px solid var(--bana-blue); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; border-radius: 5px;}
-        .logo-area img { height: 40px; width: auto; }
-
-        .nav-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .btn-nav { background: white; border: 1px solid var(--bana-blue); color: var(--bana-blue); padding: 8px 15px; font-size: 0.9rem; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
-        .btn-nav:hover, .btn-nav.active { background-color: var(--bana-blue); color: white; }
-
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 600px; }
-
-        .crm-title { text-align: center; font-size: 1.8rem; color: #000; font-family: 'Times New Roman', serif; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        
-        .interaction-step { background-color: #f8f9fa; padding: 20px; margin-bottom: 20px; border-radius: 5px; border-left: 5px solid transparent; display: none; animation: fadeIn 0.4s ease-in-out; }
-        .interaction-step.visible { display: block; border-left-color: var(--bana-blue); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .script-text { font-size: 1rem; line-height: 1.6; color: #212529; margin-bottom: 15px; }
-        .highlight { color: var(--bana-blue); font-weight: 700; }
-
-        .radio-group { margin-top: 10px; display: flex; gap: 20px; align-items: center; }
-        .radio-group label { font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        input[type="radio"] { accent-color: var(--bana-blue); transform: scale(1.2); }
-
-        .alert-box-red { background-color: var(--alert-red); color: white; padding: 20px; border-radius: 5px; margin: 15px 0; font-weight: bold; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 1.5;}
-        .alert-box-yellow { background-color: var(--warning-yellow); color: #333; padding: 20px; border-radius: 8px; margin: 15px 0; font-weight: bold; text-align: center; border: 2px solid #e0c040; font-size: 0.95rem; line-height: 1.5; }
-
-        .validation-grid, .tipif-grid { display: grid; grid-template-columns: 200px 1fr; gap: 15px; align-items: center; background-color: #fff; padding: 20px; border: 1px solid #eee; margin-top: 15px; border-radius: 5px; }
-        .form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
-        
-        label { font-weight: 600; color: #555; }
-        select, textarea, input[type="text"], input[type="date"], input[type="time"], input[type="number"] { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
-        select:focus, input:focus, textarea:focus { border-color: var(--bana-blue); outline: none; box-shadow: 0 0 0 3px rgba(0, 45, 114, 0.1); }
-        textarea { resize: vertical; height: 80px; }
-
-        .system-msg { padding: 15px; margin-top: 15px; border-radius: 4px; border: 1px solid #ddd; background-color: white; }
-        .msg-end { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        .msg-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
-        
-        .huellas-no-msg { background-color: #e8f4fd; border-left: 4px solid #17a2b8; padding: 20px; margin-top: 15px; }
-        .instruction-block { background-color: #fff; padding: 15px; border: 1px dashed #999; margin-top: 10px; font-size: 0.9rem; }
-
-        .btn-action { background-color: var(--bana-red); color: white; border: none; padding: 10px 25px; border-radius: 4px; cursor: pointer; margin-top: 15px; font-weight: bold; transition: background 0.2s; }
-        .btn-action:hover { background-color: #b00020; }
-        
-        .btn-save { background-color: var(--bana-blue); color: white; border: none; padding: 15px; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold; font-size: 1.1rem; width: 100%; transition: background 0.2s; }
-        .btn-save:hover { background-color: #001f52; }
-
-        .btn-download { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-download:hover { background-color: #218838; }
-        
-        .agenda-panel { margin-top: 15px; padding: 15px; border: 1px solid #b2dba1; background-color: #dff0d8; border-radius: 5px; display: none; }
-
-        select option { font-weight: bold; }
-        .opt-full { background-color: var(--success-green); color: #000; } 
-        .opt-dtt { background-color: var(--blue-dtt); color: #fff; } 
-        .opt-fin { background-color: var(--cyan-fin); color: #fff; } 
-        .opt-red { background-color: var(--alert-red); color: #fff; } 
-        .opt-other { background-color: #FFFF00; color: #000; } 
-
+        .alert-banner {
+            background-color: #e53935;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .container {
+            max-width: 950px;
+            margin: 20px auto;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-container {
+            text-align: right;
+        }
+        .logo-container img {
+            height: 45px;
+        }
+        .vigencia-text {
+            font-size: 13px;
+            color: #111;
+            margin-top: 4px;
+        }
+        h2.portal-title {
+            text-align: center;
+            font-family: "Times New Roman", Times, serif;
+            letter-spacing: 1px;
+            font-size: 24px;
+            margin: 30px 0;
+            color: #222;
+        }
+        .interactions-section {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .interactions-table {
+            display: flex;
+            gap: 25px;
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+        }
+        .script-text {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #111;
+        }
+        .brand-afore {
+            color: #002d62;
+            font-weight: bold;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #111;
+        }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid #b0bec5;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        .btn-buscar {
+            background-color: #5bc0de;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+        .radio-group {
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .privacy-box {
+            background-color: #fdd835;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #111;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+        .privacy-check {
+            margin-top: 15px;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-guardar {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .footer-params {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 12px;
+            color: #222;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-area">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Citibanamex_logo.svg/2560px-Citibanamex_logo.svg.png" alt="Citibanamex">
-    </div>
-    <div>
-        <button class="btn-download" onclick="descargarExcel()">💾 Descargar Reporte</button>
-    </div>
-</header>
-
-<div class="container">
-
-    <div class="nav-buttons">
-        <button class="btn-nav active" onclick="cargarCRM('enrolamiento')">Enrolamiento</button>
-        <button class="btn-nav" onclick="cargarCRM('ppp-dep')">PPP Dependencia</button>
-        <button class="btn-nav" onclick="cargarCRM('ppt-trab')">PPT Trabajador</button>
-        <button class="btn-nav" onclick="cargarCRM('notiafo')">Notiafo</button>
-        <button class="btn-nav" onclick="cargarCRM('portal')">Portal Prospectos</button>
-        <button class="btn-nav" onclick="cargarCRM('info')">Info Retiro</button>
-        <button class="btn-nav" onclick="cargarCRM('digital')">Digital IN</button>
-        <button class="btn-nav" onclick="cargarCRM('confin')">Confirmación IN</button>
-        <button class="btn-nav" onclick="cargarCRM('confout')">Confirmación OUT</button>
-        <button class="btn-nav" onclick="cargarCRM('folio')">Folio</button>
+    <!-- Alerta superior exacta -->
+    <div class="alert-banner">
+        ¡CRM SIN INTERACTION ID, FAVOR DE REPORTAR CON TU SUPERVISOR!
     </div>
 
-    <div id="crm-enrolamiento" class="crm-content">
-        <h2 class="crm-title">ENROLAMIENTO</h2>
-        <div id="enr-step1" class="interaction-step visible">
-            <div class="script-text">Buenos D/T/N mi nombre es de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr./Srita. Por favor?</div>
-            <div class="radio-group"><label><input type="radio" name="enr_r1" onclick="nextStepEnr(1, true)"> Sí</label><label><input type="radio" name="enr_r1" onclick="nextStepEnr(1, false)"> No</label></div>
-            <div id="enr-msg-1-no" class="system-msg msg-info" style="display:none; background-color: #f8f9fa; border:1px solid #ddd; color:#333;">Una disculpa por las molestias, agradezco haya tomado la llamada, que siga pasando un excelente día/tarde/noche. Mi nombre es () de <strong>AFORE BANAMEX</strong>, hasta luego.</div>
-            <button id="enr-btn-tip-1" class="btn-action" style="display:none; background:#555;" onclick="irATipificacion('enr')">Ir a Tipificación</button>
-        </div>
-        <div id="enr-step2" class="interaction-step">
-            <div class="script-text">Mucho gusto Sr. / Srita., antes que nada le informo que en <span class="highlight">AFORE BANAMEX</span> sus datos personales están protegidos, puede consultar nuestro aviso de privacidad en www.aforebanamex.com.mx o bien si Usted así lo desea, en este momento lo puedo transferir para que escuche nuestro Aviso de Privacidad.<br><br><strong>¿Desea escucharlo?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="enr_r2" onclick="nextStepEnr(2, 'si')"> Sí</label><label><input type="radio" name="enr_r2" onclick="nextStepEnr(2, 'no')"> No</label></div>
-            <div id="enr-msg-privacy" class="system-msg msg-info" style="display:none;">[Sistema]: Transfiriendo a IVR de Aviso de Privacidad... (Al terminar, continuar).</div>
-        </div>
-        <div id="enr-step3" class="interaction-step">
-            <div class="script-text">Sr. / Srita., le llamó en seguimiento al trámite de enrolamiento que realizó con nosotros y queremos confirmar la información.<br><br><strong>¿Podemos continuar?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="enr_r3" onclick="nextStepEnr(3, true)"> Sí</label><label><input type="radio" name="enr_r3" onclick="nextStepEnr(3, false)"> No</label></div>
-            <div id="enr-opciones-container" style="display:none; margin-top:15px; border-top:1px solid #ccc; padding-top:10px;"><label style="font-weight:bold;">Opciones (Razón del rechazo):</label><select id="enr-opciones-rechazo" onchange="document.getElementById('enr-btn-tip-3').style.display = 'inline-block'"><option value="">SELECCIONE</option><option value="No tengo tiempo en este momento">No tengo tiempo en este momento</option><option value="No tengo tiempo estoy ocupado">No tengo tiempo estoy ocupado</option><option value="No me gusta dar información por teléfono">No me gusta dar información por teléfono</option><option value="Ya me habían llamado anteriormente">Ya me habían llamado anteriormente</option><option value="No me interesa">No me interesa</option><option value="Yo me acerco después a un care a preguntar">Yo me acerco después a un care a preguntar</option><option value="Titular Molesto">Titular Molesto</option></select><br><button id="enr-btn-tip-3" class="btn-action" style="display:none; background:#555;" onclick="irATipificacion('enr')">Ir a Tipificación</button></div>
-        </div>
-        <div id="enr-step4" class="interaction-step">
-            <div class="script-text">La tranquilidad de nuestros clientes es nuestra prioridad, por esa razón esta llamada está siendo grabada. Teniendo en cuenta que para <span class="highlight">AFORE BANAMEX</span> la calidad en el servicio es muy importante, antes de continuar debo corroborar un dato:<br><strong>¿Podría por favor indicarme su nombre completo y/o Curp?</strong></div>
-            <div class="validation-grid"><label>Nombre Completo:</label><select id="enr-val-nombre"><option>SELECCIONE</option><option>CORRECTO</option><option>INCORRECTO</option></select><label>Número Telefónico:</label><select id="enr-val-tel"><option>SELECCIONE</option><option>CORRECTO</option><option>INCORRECTO</option></select><label>CURP:</label><select id="enr-val-curp"><option>SELECCIONE</option><option>CORRECTO</option><option>INCORRECTO</option></select></div>
-            <button class="btn-action" onclick="validarDatosEnr()">Confirmar Datos</button>
-            <div id="enr-error-val" class="system-msg msg-end" style="display:none;">Error: Debe validar al menos un dato como "CORRECTO".</div>
-        </div>
-        <div id="enr-step5" class="interaction-step">
-            <div class="script-text">Sr./ Sra./ Srita. Tengo en sistema que cuando acudió al CARE (Centro de Atención para el Retiro) a realizar su trámite para su Expediente de Identificación Electrónico existieron inconvenientes al realizar la toma de alguna de sus huellas dactilares dentro del proceso queremos confirmar si usted tiene conocimiento.</div>
-            <div class="radio-group"><label><input type="radio" name="enr_r5" onclick="nextStepEnr(5, true)"> Sí</label><label><input type="radio" name="enr_r5" onclick="nextStepEnr(5, false)"> No</label></div>
-            <div id="enr-huellas-no" class="huellas-no-msg" style="display:none;"><p><strong>"Nos gustaría identificar si usted sabe sí sus huellas fueron registradas con excepciones..."</strong></p><div class="instruction-block"><ul><li>En caso de que el cliente mantenga su postura... canalizar al CARE.</li><li>En caso de que no recuerde el número de huellas... registrar No coincidencia.</li><li>En caso de que el cliente mencione que no tiene excepciones... enviar a CARE.</li></ul></div><button class="btn-action" onclick="nextStepEnr(5, 'continuar')">Continuar al Cierre</button></div>
-        </div>
-        <div id="enr-step6" class="interaction-step">
-            <div class="script-text" style="background-color: #e3f2fd; padding: 15px; border-radius: 5px;"><p><strong>Gracias a esta llamada y a la confirmación de sus datos, su trámite de enrolamiento continúa en proceso.</strong></p><p>Le recomendamos que, en caso de haber recibido instrucciones adicionales al acudir al Centro de Atención para el Retiro (CARE) por parte de un Asesor Previsional, las siga tal como le fueron indicadas.</p><p>El tiempo de respuesta del trámite es de <strong>5 a 10 días hábiles</strong>. Una vez concluido este periodo, podrá acudir nuevamente al Centro de Atención para el Retiro (CARE) para realizar cualquier otro trámite de su interés o dar seguimiento al actual.</p><p>Para cualquier duda sobre su cuenta individual, puede comunicarse a nuestro Centro de Atención Telefónica al <strong>55 2262 3673</strong>, de lunes a sábado, de 8:00 a. m. a 8:00 p. m., sin costo desde todo el país.</p></div><br><button class="btn-action" onclick="irATipificacion('enr')">Finalizar y Tipificar</button>
-        </div>
-        <div id="enr-step7" class="interaction-step" style="border-left-color: #28a745;">
-            <h3 style="color:var(--bana-blue);">TIPIFICACIÓN ENROLAMIENTO</h3>
-            <div class="tipif-grid">
-                <label>Calificación:</label><select id="enr-calif"><option>SELECCIONE</option><option>CONTACTO EFECTIVO</option><option>CONTACTO NO EFECTIVO</option></select>
-                <label>Tipificación:</label><select id="enr-tipif" onchange="verificarAgenda('enr')"><option value="">SELECCIONE</option><option value="FULL" class="opt-full">FULL - CONTACTO EXITOSO (CONFIRMA EXCEPCIONES)</option><option value="FULL" class="opt-full">FULL - CONTACTO EXITOSO (NO CONFIRMA EXCEPCIONES)</option><option value="DTT" class="opt-dtt">DTT - Cliente no está interesado</option><option value="TRU" class="opt-other">TRU - Cuelga llamada</option><option value="OCU" class="opt-other">OCU - Teléfono ocupado</option><option value="INT" class="opt-other">INT - Suena de 1 a 5 veces y no responde</option><option value="MED" class="opt-other">MED - Trabajador pide llamar después</option><option value="NCO" class="opt-other">NCO - Trabajador no se encuentra</option><option value="NCA" class="opt-other">NCA - El apoderado no se encuentra</option><option value="CEL" class="opt-other">CEL - Fuera de servicio & Buzón</option><option value="DNC" class="opt-other">DNC - Datos no coinciden</option><option value="FIN" class="opt-fin">FIN - Finado</option></select>
-                <label>Comentarios:</label><textarea id="enr-coment"></textarea>
+    <div class="container">
+        <!-- Cabecera con Logos y Vigencia -->
+        <div class="header-top">
+            <div class="logo-container">
+                <!-- Puedes enlazar tu logo local o de github aquí -->
+                <div style="font-size: 11px; color: #777; font-weight: bold;">PENTAFON</div>
+                <div style="color: #002d62; font-size: 20px; font-weight: bold; letter-spacing: -1px;">citibanamex <span style="color: red;">●</span></div>
+                <div class="vigencia-text">Vigencia Base:</div>
+                <div class="vigencia-text">Llamada Reagendada: NO</div>
             </div>
-            <div id="enr-agenda" class="agenda-panel"><h4>📅 Agendar (MED)</h4><input type="date" id="enr-date"> <input type="time" id="enr-time"></div>
-            <button class="btn-save" onclick="guardarInteraccion('Enrolamiento')">GUARDAR INTERACCIÓN</button>
-        </div>
-    </div>
-
-    <div id="crm-ppp-dep" class="crm-content" style="display:none;">
-        <h2 class="crm-title">DEPENDENCIA CRM</h2>
-        <div id="ppp-step1" class="interaction-step visible">
-            <div class="script-text">Buenos D/T/N mi nombre es de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr. / Srita. Por favor?</div>
-            <div class="radio-group"><label><input type="radio" name="ppp_r1" onclick="nextStepPpp(1, true)"> Sí</label><label><input type="radio" name="ppp_r1" onclick="nextStepPpp(1, false)"> No</label></div>
-            <div class="alert-box-red">! Recuerda que debes conseguir un "SI" textual de confirmación por parte del cliente...<br>1. ¿Me puede confirmar con un "SI" o un "NO" si es usted XXXXXX?</div>
-            <div class="alert-box-yellow">¡Aviso! <br>En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos, consulte el aviso de privacidad en www.aforebanamex.com.mx o si lo prefiere le puedo transferir en este momento.<br><br><strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE</strong><br><br><label><input type="checkbox" id="ppp-chk-priv-1"> ¿Mencionaste el aviso de privacidad?</label></div>
-            <div id="ppp-msg-1-no" class="system-msg msg-end" style="display:none;">[Fin de llamada]: Agradecemos su tiempo.</div>
-            <button id="ppp-btn-tip-1" class="btn-action" style="display:none; background:#555;" onclick="irATipificacion('ppp')">Ir a Tipificación</button>
-        </div>
-        <div id="ppp-step2" class="interaction-step"><div class="script-text">Sr. / Srita., mi nombre es...</div><div class="radio-group"><label><input type="radio" name="ppp_r2" onclick="nextStepPpp(2, true)"> Sí</label><label><input type="radio" name="ppp_r2" onclick="nextStepPpp(2, false)"> No</label></div></div>
-        <div id="ppp-step2-no" class="interaction-step"><div class="alert-box-yellow">¡Aviso! En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos, consulte el aviso de privacidad en www.aforebanamex.com.mx o si lo prefiere le puedo transferir en este momento.<br><br><strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE</strong><br><br><label><input type="checkbox" id="ppp-chk-priv-2"> ¿Mencionaste el aviso de privacidad?</label></div><div class="script-text">Gracias por el tiempo que dedicó a esta llamada. Mi nombre es de <span class="highlight">AFORE BANAMEX</span>, que tenga buen(a) día/tarde/noche.</div><button class="btn-action" onclick="irATipificacion('ppp')">Finalizar y Tipificar</button></div>
-        <div id="ppp-step3" class="interaction-step"><div class="script-text">Es mi deber informarle...</div><div class="radio-group"><label><input type="radio" name="ppp_r3" onclick="nextStepPpp(3, true)"> Sí</label><label><input type="radio" name="ppp_r3" onclick="nextStepPpp(3, false)"> No</label></div></div>
-        <div id="ppp-step4" class="interaction-step"><div class="script-text">2) ¿La persona que firmo...</div><div class="radio-group"><label><input type="radio" name="ppp_r4" onclick="nextStepPpp(4, true)"> Sí</label><label><input type="radio" name="ppp_r4" onclick="nextStepPpp(4, false)"> No</label></div></div>
-        <div id="ppp-step5" class="interaction-step">
-            <div class="alert-box-yellow">
-                ¡Aviso! En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos, consulte el aviso de privacidad en www.aforebanamex.com.mx o si lo prefiere le puedo transferir en este momento.
-                <br><br>
-                <strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE</strong>
-                <br><br>
-                <label><input type="checkbox" id="ppp-chk-priv-5"> ¿Mencionaste el aviso de privacidad?</label>
-            </div>
-            <div class="script-text">Gracias por el tiempo que dedicó a esta llamada. Mi nombre es de <span class="highlight">AFORE BANAMEX</span>, que tenga buen(a) día/tarde/noche.</div>
-            <br><button class="btn-action" onclick="irATipificacion('ppp')">Finalizar y Tipificar</button>
-        </div>
-        <div id="ppp-step-tip" class="interaction-step" style="border-left-color: #28a745;">
-            <h3 style="color:var(--bana-blue);">TIPIFICACIÓN DEPENDENCIA</h3>
-            <div class="tipif-grid">
-                <label>Calificación:</label><select id="ppp-calif"><option>SELECCIONE</option><option>EFECTIVO</option><option>NO CONTACTO</option><option>CONTACTO NO EFECTIVO</option></select>
-                <label>SubCalificación:</label><select id="ppp-subcalif"><option>SELECCIONE</option><option>CONFIRMA DOCUMENTO</option><option>NO CONFIRMA DOCUMENTO</option></select>
-                <label>Tipificación:</label><select id="ppp-tipif" onchange="verificarAgenda('ppp')"><option value="">SELECCIONE</option><option value="FULL" class="opt-full">FULL - CONTACTO EXITOSO</option><option value="MED" class="opt-other">MED - Llamar después</option><option value="OCU" class="opt-other">OCU - Ocupado</option><option value="INT" class="opt-other">INT - No responde</option><option value="CEL" class="opt-other">CEL - Buzón</option></select>
-                <label>Comentarios:</label><textarea id="ppp-coment"></textarea>
-            </div>
-            <div id="ppp-agenda" class="agenda-panel"><h4>📅 Agendar (MED)</h4><input type="date" id="ppp-date"> <input type="time" id="ppp-time"></div>
-            <button class="btn-save" onclick="guardarInteraccion('PPP Dependencia')">GUARDAR INTERACCIÓN</button>
-        </div>
-    </div>
-
-    <div id="crm-ppt-trab" class="crm-content" style="display:none;">
-        <h2 class="crm-title">PPT TRABAJADOR</h2>
-        <div id="ppt-step1" class="interaction-step visible">
-            <div style="margin-bottom:15px; font-weight:bold;">Ext. telefónica: <input type="text" id="ppt-ext" placeholder="Ingrese Extensión" style="width:150px; padding:5px;"></div>
-            <div class="script-text">Buenos D/T/N mi nombre es de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr./Srita. Por favor?</div>
-            <div class="radio-group"><label><input type="radio" name="ppt_r1" onclick="nextStepPptTrab(1, true)"> Sí</label><label><input type="radio" name="ppt_r1" onclick="nextStepPptTrab(1, false)"> No</label></div>
-            <div class="alert-box-red" id="ppt-box-red" style="display:none;">! Recuerda que debes conseguir un "SI" textual de confirmación...<br>1. ¿Me puede confirmar con un "SI" o un "NO" si es usted XXXXXX?<br>2. Por protocolo de seguridad...</div>
-            <div class="alert-box-yellow" id="ppt-box-yellow-no" style="display:none;">¡Aviso! <br>En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos, consulte el aviso de privacidad en www.aforebanamex.com.mx o si lo prefiere le puedo transferir en este momento.<br><br><span style="color:#d9534f; font-weight:bold;">RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE</span><br><br><label><input type="checkbox" id="ppt-chk-priv-1-no"> ¿Mencionaste el aviso de privacidad?</label></div>
-            <button id="ppt-btn-next-1" class="btn-action" style="display:none;" onclick="nextStepPptTrab(1, 'continuar')">Continuar</button>
-        </div>
-        <div id="ppt-step2" class="interaction-step">
-            <div class="script-text">Sr. / Srita. mi nombre es de <span class="highlight">AFORE BANAMEX</span>, Gracias por recibir nuestra llamada... ¿Nos gustaría realizarle unas preguntas sobre el servicio que recibió por parte de AFORE BANAMEX al momento de acudir a solicitar su plan privado de pensiones?<br><br><strong>¿Me podrias regalar unos minutos?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="ppt_r2" onclick="nextStepPptTrab(2, true)"> Sí</label><label><input type="radio" name="ppt_r2" onclick="nextStepPptTrab(2, false)"> No</label></div>
-        </div>
-        <div id="ppt-step2-no" class="interaction-step">
-            <div class="alert-box-yellow">¡Aviso! En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos...<br>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD...<br><br><label><input type="checkbox" id="ppt-chk-priv-2"> ¿Mencionaste el aviso de privacidad?</label></div>
-            <button class="btn-action" onclick="irATipificacion('ppt')">Finalizar y Tipificar</button>
-        </div>
-        <div id="ppt-step3" class="interaction-step">
-            <div class="script-text">Es mi deber informarle que esta llamada está siendo grabada por motivos de calidad.<br><br>Tenemos nuestros registros que en días pasados usted realizó un trámite para el retiro de recursos de su Cuenta Individual al amparo de un Plan Privado de Pensiones <strong>¿Es correcto?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="ppt_r3" onclick="nextStepPptTrab(3, true)"> Sí</label><label><input type="radio" name="ppt_r3" onclick="nextStepPptTrab(3, false)"> No</label></div>
-        </div>
-        <div id="ppt-step4" class="interaction-step">
-            <div class="script-text">Le comento que todos los trámites que usted realiza en <span class="highlight">AFORE BANAMEX</span> son gratuitos, Me puede indicar <strong>¿En AFORE BANAMEX le pidieron o le cobraron algún Importe...?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="ppt_r4" onclick="nextStepPptTrab(4, true)"> Sí</label><label><input type="radio" name="ppt_r4" onclick="nextStepPptTrab(4, false)"> No</label></div>
-            <div id="ppt-monto-container" style="display:none; margin-top:10px;"><label style="font-weight:bold;">Monto:</label><input type="number" id="ppt-monto" placeholder="Ingrese el monto"></div><br><button class="btn-action" onclick="nextStepPptTrab(4, 'continuar')">Siguiente</button>
-        </div>
-        <div id="ppt-step5" class="interaction-step">
-            <div class="script-text">Nos puede confirmar si <strong>¿Usted desea continuar con el trámite para el retiro de recursos de su Cuenta Individual al amparo de su Plan Privado de Pensiones?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="ppt_r5" onclick="nextStepPptTrab(5, true)"> Sí</label><label><input type="radio" name="ppt_r5" onclick="nextStepPptTrab(5, false)"> No</label></div>
-        </div>
-        <div id="ppt-step6" class="interaction-step">
-            <div class="alert-box-yellow">¡Aviso! En <strong>AFORE BANAMEX</strong> sus datos personales están protegidos...<br>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD...<br><br><label><input type="checkbox" id="ppt-chk-priv-6"> ¿Mencionaste el aviso de privacidad?</label></div>
-            <button class="btn-action" onclick="irATipificacion('ppt')">Finalizar y Tipificar</button>
-        </div>
-        <div id="ppt-step7" class="interaction-step" style="border-left-color: #28a745;">
-            <h3 style="color:var(--bana-blue);">TIPIFICACIÓN TRABAJADOR</h3>
-            <div class="tipif-grid">
-                <label>Calificación:</label><select id="ppt-calif"><option>SELECCIONE</option><option>EFECTIVO</option><option>NO CONTACTO</option><option>CONTACTO NO EFECTIVO</option></select>
-                <label>Tipificación:</label><select id="ppt-tipif" onchange="verificarAgenda('ppt')"><option value="">SELECCIONE</option><option value="FULL" class="opt-full">FULL - CONTACTO EXITOSO</option><option value="DTT" class="opt-dtt">DTT - Cliente no está interesado</option><option value="TRU" class="opt-other">TRU - Cuelga llamada</option><option value="OCU" class="opt-other">OCU - Teléfono ocupado</option><option value="MED" class="opt-other">MED - Llamar después</option><option value="NCO" class="opt-other">NCO - Trabajador no se encuentra</option><option value="CEL" class="opt-other">CEL - Buzón</option><option value="FIN" class="opt-fin">FIN - Finado</option></select>
-                <label>Comentarios:</label><textarea id="ppt-coment"></textarea>
-            </div>
-            <div id="ppt-agenda" class="agenda-panel"><h4>📅 Agendar (MED)</h4><input type="date" id="ppt-date"> <input type="time" id="ppt-time"></div>
-            <button class="btn-save" onclick="guardarInteraccion('PPT Trabajador')">GUARDAR INTERACCIÓN</button>
-        </div>
-    </div>
-
-    <div id="crm-notiafo" class="crm-content" style="display:none;">
-        <h2 class="crm-title">NOTIAFO CRM</h2>
-        <div id="not-step1" class="interaction-step visible">
-            <div class="script-text">Buenos D/T/N mi nombre es de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr. / Srita. Por favor?</div>
-            <div class="radio-group"><label><input type="radio" name="not_r1" onclick="nextStepNotiafo(1, true)"> Sí</label><label><input type="radio" name="not_r1" onclick="nextStepNotiafo(1, false)"> No</label></div>
-            <div class="alert-box-red" id="not-red-alert" style="display:none;">! Recuerda que debes conseguir un "SI" textual de confirmación...</div>
-            <div id="not-step1-no" style="display:none;"><div class="alert-box-yellow">¡Aviso!<br>En CITIBANAMEX AFORE sus datos personales están protegidos...<br><strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR...</strong><br><br><label><input type="checkbox" id="not-chk-priv-1"> ¿Mencionaste el aviso de privacidad?</label></div><div class="script-text">Gracias por el tiempo que dedicó a esta llamada...</div><button class="btn-action" onclick="irATipificacion('not')">Ir a Tipificación</button></div>
-            <button id="not-btn-cont-1" class="btn-action" style="display:none;" onclick="nextStepNotiafo(1, 'continuar')">Continuar</button>
-        </div>
-        <div id="not-step2" class="interaction-step">
-            <div class="script-text">Sr. / Srita., mi nombre es de CITIBANAMEX AFORE... Le informamos que los datos que tenemos registrados en esta Administradora difieren de los datos que reporta el Instituto (IMSS)...<br><br>Es mi deber informarle que esta llamada está siendo grabada por motivos de calidad.<br><br><strong>¿Me puede proporcionar su Nombre completo, RFC o su número telefónico, por favor?</strong></div>
-            <div style="margin-top:10px;"><label>Nombre Completo:</label> <input type="text" id="not-nombre"><br><label>RFC:</label> <input type="text" id="not-rfc"><br><label>Numero Telefonico:</label> <input type="text" id="not-tel"></div>
-            <div class="radio-group" style="margin-top:15px;"><label><input type="radio" name="not_r2" onclick="nextStepNotiafo(2, true)"> Sí</label><label><input type="radio" name="not_r2" onclick="nextStepNotiafo(2, false)"> No</label></div>
-        </div>
-        <div id="not-step2-obj" class="interaction-step">
-            <div class="script-text" style="color:#d9534f; font-weight:bold;">Le informo que por disposición oficial es indispensable que Usted nos confirme por lo menos uno de sus datos para poder continuar con el proceso, ¿Está Usted de acuerdo?</div>
-            <div class="radio-group"><label><input type="radio" name="not_r2b" onclick="nextStepNotiafo('2b', true)"> Sí</label><label><input type="radio" name="not_r2b" onclick="nextStepNotiafo('2b', false)"> No</label></div>
-        </div>
-        <div id="not-step3" class="interaction-step">
-            <div class="script-text">Lo invitamos a que acuda a cualquiera de los Módulos Especializados de Servicio Afore o Centro de Atención para el Retiro (CARE), presentando original de los siguientes documentos:<ul><li>Identificación Oficial</li><li>Comprobante de Domicilio</li><li>Acta y CURP</li><li>Documento Migratorio (FM3 ó FM2)</li></ul></div>
-            <button class="btn-action" onclick="nextStepNotiafo(3, 'continuar')">Continuar al Cierre</button>
-        </div>
-        <div id="not-step4" class="interaction-step">
-            <div class="alert-box-yellow">¡Aviso!<br>En CITIBANAMEX AFORE sus datos personales están protegidos...<br><br><strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR...</strong><br><br><label><input type="checkbox" id="not-chk-priv-end"> ¿Mencionaste el aviso de privacidad?</label></div>
-            <button class="btn-action" onclick="irATipificacion('not')">Finalizar y Tipificar</button>
-        </div>
-        <div id="not-step-tip" class="interaction-step" style="border-left-color: #28a745;">
-            <h3 style="color:var(--bana-blue);">TIPIFICACIÓN NOTIAFO</h3>
-            <div class="tipif-grid">
-                <label>Calificación:</label><select id="not-calif"><option>SELECCIONE</option><option>EFECTIVO</option><option>NO CONTACTO</option><option>CONTACTO NO EFECTIVO</option></select>
-                <label>SubCalificación:</label><select id="not-subcalif"><option>SELECCIONE</option><option>CONFIRMACIÓN DE CLIENTE PARA ACUDIR AL CARE</option><option>Cliente no está interesado</option><option>Datos no coinciden</option></select>
-                <label>Tipificación (Agenda):</label><select id="not-tipif" onchange="verificarAgenda('not')"><option value="">SELECCIONE</option><option value="FULL">FULL - COMPLETADO</option><option value="MED">MED - Llamar después</option></select>
-                <label>Comentarios:</label><textarea id="not-coment"></textarea>
-            </div>
-            <div id="not-agenda" class="agenda-panel"><h4>📅 Agendar (MED)</h4><input type="date" id="not-date"> <input type="time" id="not-time"></div>
-            <button class="btn-save" onclick="guardarInteraccion('NOTIAFO')">GUARDAR INTERACCIÓN</button>
-        </div>
-    </div>
-
-    <div id="crm-portal" class="crm-content" style="display:none;">
-        <h2 class="crm-title">PORTAL PROSPECTOS</h2>
-        <div id="por-step1" class="interaction-step visible">
-            <div style="margin-bottom:15px; font-weight:bold;">Ext. telefónica: <input type="text" id="por-ext" placeholder="Ingrese Extensión" style="width:150px;"></div>
-            <div class="script-text">Buenos D/T/N mi nombre es de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr./Srita. Por favor?</div>
-            <div class="radio-group"><label><input type="radio" name="por_r1" onclick="nextStepPortal(1, true)"> Sí</label><label><input type="radio" name="por_r1" onclick="nextStepPortal(1, false)"> No</label></div>
-            <div class="alert-box-red" id="por-red-alert" style="display:none;">! Recuerda que debes conseguir un "SI" textual de confirmación...</div>
-            <div id="por-step1-no" style="display:none;"><div class="alert-box-yellow">¡Aviso! En AFORE BANAMEX...<br>RECUERDA QUE ES OBLIGATORIO...<br><label><input type="checkbox"> ¿Mencionaste el aviso?</label></div><button class="btn-action" onclick="irATipificacion('por')">Ir a Tipificación</button></div>
-            <button id="por-btn-cont-1" class="btn-action" style="display:none;" onclick="nextStepPortal(1, 'continuar')">Continuar</button>
-        </div>
-        <div id="por-step2" class="interaction-step">
-            <div class="script-text">Sr. /Srita. (), como le comentaba, mi nombre es (), me comunico de <span class="highlight">AFORE BANAMEX</span>, el motivo de mi llamada es confirmar la solicitud de cambio de Afore que realizó recientemente a través de nuestro portal web. ¿Es correcto?</div>
-            <div class="radio-group"><label><input type="radio" name="por_r2" onclick="nextStepPortal(2, true)"> Sí</label><label><input type="radio" name="por_r2" onclick="nextStepPortal(2, false)"> No</label></div>
-        </div>
-        <div id="por-step3" class="interaction-step">
-            <div class="script-text">En <span class="highlight">AFORE BANAMEX</span> sus datos están protegidos... Le informo que esta llamada está siendo grabada por motivos de calidad, ¿está de acuerdo en que sigamos con la misma para brindarle información?</div>
-            <div class="radio-group"><label><input type="radio" name="por_r3" onclick="nextStepPortal(3, true)"> Sí</label><label><input type="radio" name="por_r3" onclick="nextStepPortal(3, false)"> No</label></div>
-        </div>
-        <div id="por-step4" class="interaction-step">
-            <div class="script-text">Nuestro proceso de cambio de Afore, es presencial y personalizado, por lo que es necesario programar una cita con uno de nuestros asesores previsionales ya sea en alguna de nuestras sucursales o en su oficina/domicilio.</div>
-            <div style="display:flex; gap:20px; margin-top:15px;"><button class="btn-action" style="background:#002D72;" onclick="nextStepPortal(4, 'sucursal')">Sucursal</button><button class="btn-action" style="background:#002D72;" onclick="nextStepPortal(4, 'visita')">Visita</button></div>
-        </div>
-        <div id="por-step-sucursal" class="interaction-step">
-            <div class="script-text"><strong>• Sucursal:</strong> ¿Sabe a qué sucursal desea asistir o si me proporciona su código postal o municipio puedo ofrecerle las opciones más cercanas?</div>
-            <div style="margin-top:10px;"><label>Sucursal Agendada:</label> <input type="text" id="por-sucursal-nom"></div>
-            <button class="btn-action" onclick="nextStepPortal('sucursal', 'fin')">Finalizar Agendamiento</button>
-        </div>
-        <div id="por-step-visita" class="interaction-step">
-            <div class="script-text"><strong>• Visita:</strong> ¿Podría indicarme la dirección en la cuál recibirá al asesor?</div>
-            <div class="form-grid-3"><div><label>Calle:</label><input type="text" id="por-calle"></div><div><label>CP:</label><input type="text" id="por-cp"></div><div><label>Colonia:</label><input type="text" id="por-colonia"></div><div><label>Alcaldía:</label><input type="text" id="por-alcaldia"></div><div><label>Estado:</label><input type="text" id="por-estado"></div><div><label>Referencias:</label><input type="text" id="por-ref"></div><div><label>Tel:</label><input type="text" id="por-tel"></div><div><label>Email:</label><input type="text" id="por-email"></div></div>
-            <div style="margin-top:15px;"><label>Fecha:</label> <input type="date" id="por-cita-date"><label>Hora:</label> <select id="por-cita-time"><option>8:00 AM</option><option>12:00 PM</option><option>4:00 PM</option></select></div>
-            <div style="color:red; font-size:0.9rem; margin-top:10px; font-weight:bold;">Para poder realizar su trámite necesitará su Credencial de Elector vigente...</div>
-            <button class="btn-action" onclick="nextStepPortal('visita', 'fin')">Finalizar Agendamiento</button>
-        </div>
-        <div id="por-step-end" class="interaction-step">
-            <div class="alert-box-yellow">RECUERDA QUE ES OBLIGATORIO MENCIONAR...<br><label><input type="checkbox"> ¿Mencionaste el aviso?</label></div>
-            <button class="btn-action" onclick="irATipificacion('por')">Ir a Tipificación</button>
-        </div>
-        <div id="por-step-tip" class="interaction-step" style="border-left-color: #28a745;"><h3>TIPIFICACIÓN PORTAL</h3><div class="tipif-grid"><label>Tipificación:</label><select id="por-tipif" onchange="verificarAgenda('por')"><option>FULL-R</option><option>FULL-S</option><option>MED</option></select><label>Comentarios:</label><textarea id="por-coment"></textarea></div><div id="por-agenda" class="agenda-panel"><input type="date" id="por-date"><input type="time" id="por-time"></div><button class="btn-save" onclick="guardarInteraccion('Portal')">GUARDAR</button></div>
-    </div>
-
-    <div id="crm-confout" class="crm-content" style="display:none;">
-        <h2 class="crm-title">CONFIRMACIÓN OUT</h2>
-        <div id="out-step1" class="interaction-step visible">
-            <div class="script-text">Buenos D/T/N mi nombre es , llamamos de <span class="highlight">AFORE BANAMEX</span>, ¿Tengo el gusto con el/la Sr. / Srita Por favor?.</div>
-            <div class="radio-group"><label><input type="radio" name="out_r1" onclick="nextStepOut(1, true)"> Sí</label><label><input type="radio" name="out_r1" onclick="nextStepOut(1, false)"> No</label></div>
-            
-            <div class="alert-box-red">
-                Recuerda que debes conseguir un "SI" textual de confirmación por parte del cliente, puedes utilizar alguna de estas preguntas para conseguirlo.<br>
-                1. ¿Me puede confirmar con un "SI" o un "NO" si es usted XXXXXX?<br>
-                2. Por protocolo de seguridad, ¿Me puede confirmar con un "SI" o un "NO" si es usted XXXXXX?
-            </div>
-
-            <div id="out-conocido-panel" style="display:none; margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
-                <p style="font-weight:bold;">¿Usted conoce al Sr/sra?</p>
-                <div class="radio-group"><label><input type="radio" name="out_r_conoce" onclick="manejarConocido(true)"> Sí</label><label><input type="radio" name="out_r_conoce" onclick="manejarConocido(false)"> No</label></div>
-            </div>
-            
-            <div id="out-no-conoce-msg" class="system-msg msg-end" style="display:none;">Muchas gracias por la información hasta luego.<br><button class="btn-action" onclick="irATipificacion('out')">Finalizar (EQU)</button></div>
-            <div id="out-conoce-agenda" class="agenda-panel"><p>Validaremos si es posible contactarlo más tarde. Por favor agende:</p><label>Fecha:</label> <input type="date" id="out-date-conoce"><label>Hora:</label> <input type="time" id="out-time-conoce"><br><br><button class="btn-save" onclick="guardarInteraccion('Confirmación OUT - Agenda')">Agendar Segunda Llamada</button></div>
-        </div>
-        <div id="out-step2" class="interaction-step">
-            <div class="script-text">Es mi deber informarle que esta llamada está siendo grabada por motivos de calidad. Sr. /Srita. , para Citibanamex Afore es un gusto recibir su solicitud de cambio de afore.<br><br>¿Sabía qué en los últimos 3 años, más de un millón de clientes se cambiaron a Citibanamex Afore?, usted también puede ser parte de Citibanamex Afore integrante de uno de los grupos financieros más sólidos del mercado.<br><br>El motivo de mi llamada es apoyarle en cómo confirmar y concluir su trámite, este proceso nos llevará solamente <strong>2 minutos</strong>, le comento que es muy importante realizar este paso, debido a que tenemos pocos días para realizarlo, <strong>¿Me permite continuar?</strong></div>
-            <div class="radio-group"><label><input type="radio" name="out_r2" onclick="nextStepOut(2, true)"> Sí</label><label><input type="radio" name="out_r2" onclick="nextStepOut(2, false)"> No</label></div>
-            <div id="out-no-tiempo-panel" style="display:none; margin-top:15px; padding-top:10px;"><p>Entiendo, esta llamada es muy importante... <strong>¿En qué momento desea que le llamemos?</strong></p><div class="radio-group"><label><input type="radio" name="out_r_tiempo" onclick="nextStepOut(2, true)"> Continuar ahora</label><label><input type="radio" name="out_r_tiempo" onclick="document.getElementById('out-agenda-step2').style.display='block'"> Llamar de nuevo</label></div><div id="out-agenda-step2" class="agenda-panel"><label>Fecha:</label><input type="date" id="out-date-step2"><label>Hora:</label><input type="time" id="out-time-step2"><button class="btn-save" onclick="guardarInteraccion('Confirmación OUT - Agenda')">Agendar</button></div></div>
-        </div>
-        <div id="out-step3" class="interaction-step">
-            <div class="script-text">Gracias, por favor:<ol><li>Ingrese a la bandeja de entrada de sus Mensajes o SMS en su teléfono celular.</li><li>Identifique el mensaje con el nombre AFORE</li><li>Ábralo y haga clic en la liga que aparece en el mensaje. En este momento será redireccionado a la página web del Sistema de Ahorro para el Retiro.</li><li>Una vez que se encuentre en la página web, seleccione el botón “continuar trámite”.</li><li>En la siguiente pantalla le pedirá que ingrese un código de seguridad de 4 dígitos el cuál fue enviado a su correo electrónico y tendrá una vigencia de 3 minutos.</li><li>Ingrese su código de seguridad en la pantalla y seleccione “CONTINUAR”.</li><li>Por último, le aparecerá en pantalla la leyenda “Tu solicitud se confirmó con éxito”.</li></ol><br><strong>¡Felicidades!, su proceso de cambio a Citibanamex Afore continua, agradecemos su preferencia.</strong></div>
-            <div style="margin-top:20px; border-top:1px dashed #ccc; padding-top:15px;">
-                <p><strong>Despedida y Referencias:</strong><br>Por último, me puede proporcionar el nombre de 2 referencias para poder ofrecerles una Asesoría Previsional de su Afore.<br><em>En caso de que no te proporcione algún nombre, agradece y continua la llamada. Si te proporciona alguna referencia, documéntalas y continua la llamada.</em></p>
-                <div class="form-grid-3"><div><label>Nombre Referencia 1:</label><input type="text" id="out-ref1"></div><div><label>Nombre Referencia 2:</label><input type="text" id="out-ref2"></div></div>
-            </div>
-            <button class="btn-action" onclick="nextStepOut(3, 'continuar')">Finalizar</button>
-        </div>
-        
-        <div id="out-step-end" class="interaction-step">
-            <div class="alert-box-yellow">
-                <strong>RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE</strong>
-                <br><br>
-                Aviso de privacidad
-                <br>
-                Sr./Srita. , le agradecemos nos haya tomado la llamada, le atendió de Afore Banamex, que pase buen (a) D/T/N. Le recordamos que puede comunicarse a nuestro Centro de Atención Telefónica al 55 22 62 36 73 de lunes a sábado de 8:00 am a 8:00 pm., sin costo desde todo el país, en donde con gusto le atenderemos. Por último también le informo que en CITIBANAMEX AFORE sus datos personales están protegidos, puede consultar nuestro aviso de privacidad en www.aforebanamex.com.mx o bien si Usted así lo desea, en este momento lo puedo transferir para que escuche nuestro Aviso de Privacidad, ¿desea escucharlo?
-                <br><br>
-                <label><input type="checkbox"> ¿Mencionaste el aviso de privacidad?</label>
-            </div>
-            <div class="script-text">Le atendió de <span class="highlight">AFORE BANAMEX</span> que pase buen día/tardes/noches.</div>
-            <button class="btn-action" onclick="irATipificacion('out')">Ir a Tipificación</button>
         </div>
 
-        <div id="out-step-tip" class="interaction-step" style="border-left-color: #28a745;">
-            <h3 style="color:var(--bana-blue);">TIPIFICACIÓN CONFIRMACIÓN OUT</h3>
-            <div class="tipif-grid">
-                <label>Calificación:</label><select id="out-calif"><option>SELECCIONE</option><option>CONTACTO EXITOSO</option><option>CONTACTO NO EXITOSO</option></select>
-                <label>Tipificación:</label>
-                <select id="out-tipif" onchange="verificarAgenda('out')">
-                    <option value="">SELECCIONE</option>
-                    <option value="FULL-1" class="opt-full">FULL - LLAMADA EXITOSA TRABAJADOR LOCALIZADO CON SCRIPT (CONFIRMA TRASPASO)</option>
-                    <option value="FULL-2" class="opt-full">FULL - LLAMADA EXITOSA TRABAJADOR LOCALIZADO CON SCRIPT (CONFIRMA, PROBLEMAS CON EL SMS)</option>
-                    <option value="FULL-3" class="opt-full">FULL - LLAMADA EXITOSA TRABAJADOR LOCALIZADO CON SCRIPT ( NO CONFIRMA TRASPASO)</option>
-                    <option value="TRU" class="opt-other">TRU - Cuelga llamada, cortada</option>
-                    <option value="CEL" class="opt-other">CEL - Fuera de servicio & Buzón de voz</option>
-                    <option value="OCU" class="opt-other">OCU - Teléfono ocupado</option>
-                    <option value="INT" class="opt-other">INT - Suena de 1 a 5 veces y no responde</option>
-                    <option value="MED" class="opt-other">MED - Trabajador no contesta el script, pide se le llame después</option>
-                    <option value="NCO" class="opt-other">NCO - Trabajador no se encuentra</option>
-                    <option value="NCA" class="opt-other">NCA - El apoderado no se encuentra</option>
-                    <option value="DNC" class="opt-other">DNC - Datos no coinciden</option>
-                    <option value="REC" class="opt-red">REC - El trabajador contesta y no reconoce haber realizado el trámite...</option>
-                    <option value="EQU" class="opt-red">EQU - No conocen al trabajador</option>
-                    <option value="TMO" class="opt-red">TMO - Cliente molesto, no está interesado...</option>
-                    <option value="FIN" class="opt-fin">FIN - Finado</option>
-                    <option value="DTT" class="opt-dtt">DTT - Cliente no está interesado en recibir información</option>
+        <h2 class="portal-title">PORTAL PROSPECTOS IN</h2>
+
+        <!-- Últimas interacciones -->
+        <div class="interactions-section">Ultimas interacciones</div>
+        <div class="interactions-table">
+            <span>Fecha</span>
+            <span>Calificación</span>
+            <span>Tipificación</span>
+            <span>Comentarios</span>
+        </div>
+
+        <!-- Guion de llamadas inicial -->
+        <div class="script-text">
+            Buenos D/T/N gracias por llamar a <span class="brand-afore">CITIBANAMEX AFORE</span> le atiende () ¿Con quién tengo el gusto?
+        </div>
+        <div class="script-text">
+            Mucho gusto Sr. Srita. (Nombre y apellidos del cliente)
+        </div>
+        <div class="script-text">
+            Muy amable. ¿Me puede indicar su nombre completo y número telefónico por favor? Es importante, me lo indique como lo registro en la solicitud, por favor.
+        </div>
+
+        <!-- Primeros campos de captura -->
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" value="Jonathan">
+            </div>
+            <div class="form-group">
+                <label>Apellido Paterno:</label>
+                <input type="text" value="Vela">
+            </div>
+            <div class="form-group">
+                <label>Apellido Materno:</label>
+                <input type="text" value="Mondragon">
+            </div>
+        </div>
+
+        <div class="form-grid-2" style="grid-template-columns: 1fr 2fr;">
+            <div class="form-group">
+                <label>Telefono</label>
+                <input type="text" value="5610117791">
+            </div>
+        </div>
+
+        <button class="btn-buscar">Buscar</button>
+
+        <!-- Sección de validación en base -->
+        <div class="radio-group">
+            ¿El Cliente esta registardo en base? 
+            <label style="margin-left: 10px; font-weight: normal;"><input type="radio" name="base" checked> Sí</label>
+            <label style="margin-left: 10px; font-weight: normal;"><input type="radio" name="base"> No</label>
+        </div>
+
+        <div class="script-text" style="font-size: 14px; margin-bottom: 15px;">
+            Sr./Srita. Para registrar la llamada, puede brindarme los siguientes datos:
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label>CURP</label>
+                <input type="text" value="VEMJ0006221K9">
+            </div>
+            <div class="form-group">
+                <label>NSS</label>
+                <input type="text" value="98237658930">
+            </div>
+        </div>
+
+        <div class="form-grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" value="JONATHAN">
+            </div>
+            <div class="form-group">
+                <label>Apellido Paterno</label>
+                <input type="text" value="VELA">
+            </div>
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <input type="text" value="MONDRAGON">
+            </div>
+        </div>
+
+        <div class="form-grid-2" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+            <div class="form-group">
+                <label>Asesoria que requiere</label>
+                <select>
+                    <option>SELECCIONE</option>
+                    <option>RENDIMIENTOS</option>
+                    <option>MODIFICACION DE DATOS</option>
+                    <option>ESTADO DE CUENTA</option>
+                    <option>TRÁMITE DE PENSIÓN</option>
+                    <option>RETIRO DESEMPLEO</option>
+                    <option>RETIRO MATRIMONIO</option>
+                    <option>TRASPASO SAR</option>
+                    <option>RETIRO TOTAL</option>
+                    <option>AHORRO VOLUNTARIO</option>
+                    <option>DESIGNACION DE BENEFICIARIOS</option>
+                    <option>INFORMACIÓN GENERAL</option>
+                    <option>REGISTRO</option>
+                    <option>TRASPASO AFORE</option>
+                    <option>CITA ASESOR PREVISIONAL</option>
+                    <option>CITA CARE</option>
                 </select>
-                <label>Comentarios:</label><textarea id="out-coment"></textarea>
             </div>
-            <div id="out-agenda" class="agenda-panel"><h4>📅 Agendar (MED)</h4><input type="date" id="out-date"> <input type="time" id="out-time"></div>
-            <button class="btn-save" onclick="guardarInteraccion('Confirmación OUT')">GUARDAR INTERACCIÓN</button>
+        </div>
+
+        <!-- Aviso de Privacidad y Despedida (Banner Amarillo) -->
+        <div class="privacy-box">
+            RECUERDA QUE ES OBLIGATORIO MENCIONAR DE FORMA CORRECTA Y COMPLETA EL AVISO DE PRIVACIDAD, SI ES NECESARIO DILO NUEVAMENTE<br><br>
+            <span style="font-size: 14px; text-decoration: underline;">AVISO PRIVACIDAD</span><br>
+            En CITIBANAMEX AFORE sus datos están protegidos, puede consultar el aviso de privacidad en <strong>https://www.aforebanamex.com.mx</strong> o bien si Usted así lo desea, en este momento lo puedo transferir para que escuche nuestro Aviso de Privacidad. Le recordamos que todos nuestros trámites son gratuitos.<br><br>
+            <span style="font-size: 14px; text-decoration: underline;">DESPEDIDA</span><br>
+            Sr. /Srita(), agradezco se haya comunicado, le recuerdo que en cualquier momento puede ingresar a www.aforebanamex.com.mx para conocer más detalle de nuestros servicios o si lo prefiere comunicarse al <strong>55-22-62-36-73</strong>, de lunes a sábado de 8:00 a 20:00 horas.
+            
+            <div class="privacy-check">
+                <input type="checkbox"> ¿Mencionaste el aviso de privacidad?
+            </div>
+        </div>
+
+        <!-- Calificación, Tipificación y Comentarios -->
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Calificación</label>
+            <select>
+                <option>SELECCIONE</option>
+                <option>CONTACTO EFECTIVO</option>
+                <option>CONTACTO NO EFECTIVO</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Tipificación</label>
+            <select>
+                <option>SELECCIONE</option>
+                <option>FULL-S - SERVICIO</option>
+                <option>FULL-R - DESCARGA APP - AFILIADO</option>
+                <option>FULL-AP - CITA CON ASESOR PREVISIONAL</option>
+                <option>FULL-SUC - CITA SUCURSAL</option>
+                <option>DTT - CONTESTA, PERO NO DESEA CONTINUAR CON LA LLAMADA</option>
+                <option>FIN - FINADO</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label>Comentarios</label>
+            <input type="text" style="height: 35px;">
+        </div>
+
+        <button class="btn-guardar">Guardar</button>
+
+        <!-- Barra inferior de parámetros técnicos -->
+        <div class="footer-params">
+            <span>InteractionId:</span>
+            <span>CompanyId:</span>
+            <span>ProjectId:</span>
+            <span>WorkgroupId:</span>
+            <span>AgentId:</span>
+            <span>Username:</span>
+            <span>Ani:</span>
+            <span>Dnis:</span>
+            <span>Chain_Id:</span>
+            <span>Skill:</span>
+            <span>CampanaTransfer:</span>
+            <div style="width: 100%; margin-top: 5px;">ID_UNICO:</div>
         </div>
     </div>
 
-    <div id="crm-placeholder" class="crm-content" style="display:none; padding:40px; text-align:center;"><h3>Este flujo aún no ha sido cargado.</h3><p>Selecciona un flujo de la botonera.</p></div>
-
-</div>
-
-<script>
-    let historialInteracciones = JSON.parse(localStorage.getItem('crm_pentafon_db')) || [];
-
-    function cargarCRM(id) {
-        document.querySelectorAll('.btn-nav').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        document.querySelectorAll('.crm-content').forEach(div => div.style.display = 'none');
-        const map = {'enrolamiento':'crm-enrolamiento','ppp-dep':'crm-ppp-dep','ppt-trab':'crm-ppt-trab','notiafo':'crm-notiafo','portal':'crm-portal','confout':'crm-confout'};
-        if(map[id]) document.getElementById(map[id]).style.display = 'block';
-        else document.getElementById('crm-placeholder').style.display = 'block';
-    }
-
-    // --- ENROLAMIENTO ---
-    function nextStepEnr(paso, val) {
-        if(paso===1) { if(val) {reveal('enr-step2');hide('enr-msg-1-no');hide('enr-btn-tip-1');} else {show('enr-msg-1-no');show('enr-btn-tip-1');hide('enr-step2');} }
-        if(paso===2) { if(val==='si') show('enr-msg-privacy'); else hide('enr-msg-privacy'); reveal('enr-step3'); }
-        if(paso===3) { if(val) {reveal('enr-step4');hide('enr-opciones-container');} else {show('enr-opciones-container');hide('enr-step4');} }
-        if(paso===5) { if(val===true) {hide('enr-huellas-no');reveal('enr-step6');} else if(val===false) {show('enr-huellas-no');hide('enr-step6');} else {reveal('enr-step6');} }
-    }
-    function validarDatosEnr(){ const n=getVal('enr-val-nombre'),t=getVal('enr-val-tel'),c=getVal('enr-val-curp'); if(n==="CORRECTO"||t==="CORRECTO"||c==="CORRECTO"){hide('enr-error-val');reveal('enr-step5');}else show('enr-error-val'); }
-
-    // --- PPP DEPENDENCIA ---
-    function nextStepPpp(paso, val) {
-        if(paso===1) { if(val) {reveal('ppp-step2');hide('ppp-msg-1-no');hide('ppp-btn-tip-1');} else {show('ppp-msg-1-no');show('ppp-btn-tip-1');hide('ppp-step2');} }
-        if(paso===2) { if(val) {reveal('ppp-step3');hide('ppp-step2-no');} else {reveal('ppp-step2-no');hide('ppp-step3');} }
-        if(paso===3) reveal('ppp-step4');
-        if(paso===4) reveal('ppp-step5');
-    }
-
-    // --- PPT TRABAJADOR ---
-    function nextStepPptTrab(paso, val) {
-        if(paso===1) {
-            if(val===true) { show('ppt-box-red');show('ppt-btn-next-1');hide('ppt-box-yellow-no'); }
-            else if(val===false) { show('ppt-box-red');show('ppt-box-yellow-no');hide('ppt-btn-next-1');irATipificacion('ppt'); }
-            else { reveal('ppt-step2'); }
-        }
-        if(paso===2) { if(val) {reveal('ppt-step3');hide('ppt-step2-no');} else {reveal('ppt-step2-no');hide('ppt-step3');} }
-        if(paso===3) reveal('ppt-step4');
-        if(paso===4) { if(val===true) show('ppt-monto-container'); else hide('ppt-monto-container'); if(val==='continuar') reveal('ppt-step5'); }
-        if(paso===5) reveal('ppt-step6');
-    }
-
-    // --- NOTIAFO ---
-    function nextStepNotiafo(paso, val) {
-        if(paso===1) { if(val===true) {show('not-red-alert');show('not-btn-cont-1');hide('not-step1-no');} else if(val===false) {show('not-red-alert');hide('not-btn-cont-1');show('not-step1-no');} else reveal('not-step2'); }
-        if(paso===2) { if(val===true) {reveal('not-step3');hide('not-step2-obj');} else {reveal('not-step2-obj');hide('not-step3');} }
-        if(paso==='2b') { if(val===true) reveal('not-step3'); else {reveal('not-step4');hide('not-step3');} }
-        if(paso===3) reveal('not-step4');
-    }
-
-    // --- PORTAL PROSPECTOS ---
-    function nextStepPortal(paso, val) {
-        if(paso===1) { if(val===true) {show('por-red-alert');show('por-btn-cont-1');hide('por-step1-no');} else if(val===false) {show('por-red-alert');hide('por-btn-cont-1');show('por-step1-no');} else reveal('por-step2'); }
-        if(paso===2) { if(val===true) reveal('por-step3'); else reveal('por-step-end'); }
-        if(paso===3) { if(val===true) reveal('por-step4'); else reveal('por-step-end'); }
-        if(paso===4) { if(val==='sucursal') {reveal('por-step-sucursal');hide('por-step-visita');} if(val==='visita') {reveal('por-step-visita');hide('por-step-sucursal');} }
-        if(paso==='sucursal'||paso==='visita') reveal('por-step-end');
-    }
-
-    // --- CONFIRMACIÓN OUT ---
-    function nextStepOut(paso, val) {
-        if(paso===1) { if(val===true) {reveal('out-step2');hide('out-conocido-panel');hide('out-no-conoce-msg');hide('out-conoce-agenda');} else show('out-conocido-panel'); }
-        if(paso===2) { if(val===true) {reveal('out-step3');hide('out-no-tiempo-panel');} else show('out-no-tiempo-panel'); }
-        if(paso===3) reveal('out-step-end');
-    }
-    function manejarConocido(conoce) { if(conoce) {hide('out-no-conoce-msg');show('out-conoce-agenda');} else {hide('out-conoce-agenda');show('out-no-conoce-msg');} }
-
-    // --- COMUNES ---
-    function irATipificacion(flujo) { const m={'enr':'enr-step7','ppp':'ppp-step-tip','ppt':'ppt-step7','not':'not-step-tip','por':'por-step-tip','out':'out-step-tip'}; if(m[flujo]) reveal(m[flujo]); }
-    function verificarAgenda(flujo) { const s=document.getElementById(flujo+'-tipif').value,p=document.getElementById(flujo+'-agenda'); if(p) p.style.display=s.includes("MED")?'block':'none'; }
-    
-    function guardarInteraccion(nf) {
-        let pf=''; if(nf.includes('Enrolamiento')) pf='enr'; if(nf.includes('PPP')) pf='ppp'; if(nf.includes('PPT')) pf='ppt'; if(nf.includes('NOTIAFO')) pf='not'; if(nf.includes('Portal')) pf='por'; if(nf.includes('OUT')||nf.includes('Agenda')) pf='out';
-        let reg = { "ID": Date.now(), "Fecha": new Date().toLocaleDateString(), "Hora": new Date().toLocaleTimeString(), "Flujo": nf };
-        if(nf.includes('Agenda')) {
-            reg["Calificación"] = "N/A"; reg["Tipificación"] = "MED - Agendado"; 
-            reg["Cita Fecha"] = document.getElementById(pf+'-date-conoce').value||document.getElementById(pf+'-date-step2').value;
-            reg["Cita Hora"] = document.getElementById(pf+'-time-conoce').value||document.getElementById(pf+'-time-step2').value;
-        } else {
-            reg["Calificación"] = document.getElementById(pf+'-calif').value;
-            reg["Tipificación"] = document.getElementById(pf+'-tipif').value;
-            reg["Comentarios"] = document.getElementById(pf+'-coment').value;
-            const d=document.getElementById(pf+'-date'); if(d) reg["Cita Fecha"]=d.value;
-            const t=document.getElementById(pf+'-time'); if(t) reg["Cita Hora"]=t.value;
-        }
-        historialInteracciones.push(reg);
-        localStorage.setItem('crm_pentafon_db', JSON.stringify(historialInteracciones));
-        alert("✅ Guardado"); location.reload();
-    }
-
-    function descargarExcel() {
-        if(historialInteracciones.length===0){alert("Sin datos");return;}
-        const ws=XLSX.utils.json_to_sheet(historialInteracciones);
-        const wb=XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb,ws,"Reporte");
-        XLSX.writeFile(wb,"Reporte_Afore.xlsx");
-    }
-
-    function show(id){document.getElementById(id).style.display='block';}
-    function hide(id){document.getElementById(id).style.display='none';}
-    function reveal(id){document.getElementById(id).classList.add('visible');document.getElementById(id).style.display='block';document.getElementById(id).scrollIntoView({behavior:"smooth"});}
-    function getVal(id){return document.getElementById(id).value;}
-
-    document.getElementById('crm-enrolamiento').style.display='block';
-    if(document.getElementById('enr-step1')) document.getElementById('enr-step1').classList.add('visible');
-</script>
 </body>
 </html>
